@@ -1,0 +1,46 @@
+sudo: true
+
+language: java
+
+jdk: openjdk8
+
+# Cache maven artifacts, pip downloads and the node modules for markdownlint
+cache:
+  directories:
+  - ~/.m2
+
+# Do not cache the opencast artifacts to detect dependency problems
+before_cache:
+  - rm -rf ~/.m2/repository/org/opencastproject
+  - sudo chown -R travis:travis ~/.m2 ~/.cache/pip docs/guides/node_modules/
+
+# Default dependency installation
+install:
+  - sudo apt-get -qq update
+  - >
+     sudo apt-get install -y
+     bzip2
+     gzip
+     procps
+     tar
+     unzip
+
+jobs:
+  include:
+    # Make a build excluding the assembly steps
+    - stage: build
+      env: name=build
+      script:
+        - ./build.sh
+
+
+    # Deploy translation keys to Crowdin if we are on develop or one of the release branches
+    - stage: deployment
+      env: name=crowdin
+      install: skip
+      script: skip
+      deploy:
+        provider: script
+        script: true
+        on:
+          all_branches: true
