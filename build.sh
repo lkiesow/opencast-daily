@@ -11,8 +11,9 @@ rm -rf opencast || :
 git clone https://github.com/opencast/opencast.git
 cd opencast
 
-branches="$(git branch -r | sed -n 's_^.*upstream/r/_r/_p' | sort -h | tail -n2) develop"
-
+branches="$(git branch -r | sed -n 's_^.*origin/r/_r/_p' | sort -h | tail -n2) develop"
+echo "$branches"
+exit 0
 for branch in $branches; do
   cd modules
   git clean -fdx .
