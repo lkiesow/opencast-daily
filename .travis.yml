@@ -45,4 +45,4 @@ script:
     -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
     -DskipTests
   - export basename="$(basename build/opencast-dist-allinone*tar.gz)"
-  - s3cmd put opencast/builds/opencast-dist-allinone*tar.gz "s3://public/daily/${basename}"
+  - s3cmd put opencast/build/opencast-dist-allinone*tar.gz "s3://public/daily/${basename}"
