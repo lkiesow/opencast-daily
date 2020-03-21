@@ -29,9 +29,6 @@ install:
   - sed -i "s/S3_KEY/${S3_KEY}/" ~/.s3cfg
   - sed -i "s/S3_SECRET/${S3_SECRET}/" ~/.s3cfg
 
-before_script:
-  - export branchcmd="git branch -r | sed -n 's_^.*origin/r/_r/_p' | sort -h | tail -n1"
-
 script:
   - git clone https://github.com/opencast/opencast.git
   - cd opencast
@@ -51,3 +48,20 @@ script:
     -DskipTests
   - export basename="$(basename build/opencast-dist-allinone*tar.gz)"
   - s3cmd put build/opencast-dist-allinone*tar.gz "s3://public/daily/${basename}"
+
+jobs:
+  include:
+    - stage: build
+      env: name=develop
+      before_script:
+        - export branchcmd="echo develop"
+
+    - stage: build
+      env: name=stable
+      before_script:
+        - export branchcmd="git branch -r | sed -n 's_^.*origin/r/_r/_p' | sort -h | tail -n1"
+
+    - stage: build
+      env: name=legacy
+      before_script:
+        - export branchcmd="git branch -r | sed -n 's_^.*origin/r/_r/_p' | sort -h | tail -n2 | head -n1"
