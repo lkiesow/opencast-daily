@@ -24,23 +24,10 @@ install:
      procps
      tar
      unzip
+     s3cmd
+  - cp s3cfg ~/.s3cfg
+  - sed -i "s/S3_KEY/${S3_KEY}/" ~/.s3cfg
+  - sed -i "s/S3_SECRET/${S3_SECRET}/" ~/.s3cfg
 
-jobs:
-  include:
-    # Make a build excluding the assembly steps
-    - stage: build
-      env: name=build
-      script:
-        - ./build.sh
-
-
-    # Deploy translation keys to Crowdin if we are on develop or one of the release branches
-    - stage: deployment
-      env: name=crowdin
-      install: skip
-      script: skip
-      deploy:
-        provider: script
-        script: true
-        on:
-          all_branches: true
+script:
+  - ./build.sh

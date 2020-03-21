@@ -1,12 +1,6 @@
 #!/bin/sh
 set -eux
 
-OUTDIR=~/output/
-
-# S3 options
-bucket=public
-contentType="application/x-compressed-tar"
-
 cd
 pwd
 
@@ -30,15 +24,6 @@ for branch in $branches; do
   # Upload files
   for file in build/*gz; do
     basename="$(basename "${file}")"
-    resource="/${bucket}/daily-builds/${basename}"
-    dateValue=`date -R`
-    stringToSign="PUT\n\n${contentType}\n${dateValue}\n${resource}"
-    signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${S3_SECRET} -binary | base64`
-    curl -X PUT -T "${file}" \
-      -H "Host: s3.opencast.org" \
-      -H "Date: ${dateValue}" \
-      -H "Content-Type: ${contentType}" \
-      -H "Authorization: AWS ${S3_KEY}:${signature}" \
-      https://s3.opencast.org${resource}
+	 s3cmd put "${file}" "s3://public/daily/${basename}"
   done
 done
