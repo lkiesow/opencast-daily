@@ -38,6 +38,7 @@ script:
   - export commit="$(git rev-parse --verify HEAD)"
   - echo "${commit}" | tee "${safebranch}.commit"
   - curl "https://s3.opencast.org/public/daily/${safebranch}.commit" -o prev.commit
+  - cat prev.commit
   - diff -q "${safebranch}.commit" prev.commit && exit 0 || true
   - s3cmd put "${safebranch}.commit" "s3://public/daily/${safebranch}.commit"
   - sed -i 's#<module>dist-.[^l][^l].*</module>##' assemblies/pom.xml
