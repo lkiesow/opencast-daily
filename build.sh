@@ -1,9 +1,6 @@
 #!/bin/sh
 set -eux
 
-cd
-pwd
-
 # Clone Opencast repository
 rm -rf opencast || :
 git clone https://github.com/opencast/opencast.git
@@ -24,6 +21,6 @@ for branch in $branches; do
   # Upload files
   for file in build/*gz; do
     basename="$(basename "${file}")"
-	 s3cmd put "${file}" "s3://public/daily/${basename}"
+	 s3cmd put --no-check-md5 "${file}" "s3://public/daily/${basename}"
   done
 done
