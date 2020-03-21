@@ -33,15 +33,16 @@ script:
   - export branch="$(curl -s https://api.github.com/repos/opencast/opencast/branches | jq -r '.[] | select(.name | startswith("r/")) | .name' | tail -n1)"
   - export safebranch="$(echo "${branch}" | sed 's#/#_#')"
   - git clone https://github.com/opencast/opencast.git
-  - cd opencast && export commit="$(git rev-parse --verify HEAD)"
+  - cd opencast
+  - export commit="$(git rev-parse --verify HEAD)"
   - echo "${commit}" | tee "${safebranch}.commit"
   - s3cmd put "${safebranch}.commit" "s3://public/daily/${safebranch}.commit"
-  - cd opencast && git checkout "${branch}"
-  - sed -i 's#<module>dist-.[^l][^l].*</module>##' opencast/assemblies/pom.xml
+  - git checkout "${branch}"
+  - sed -i 's#<module>dist-.[^l][^l].*</module>##' assemblies/pom.xml
   - >
-    cd opencast && mvn clean install
+    mvn clean install
       --batch-mode
       -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
       -DskipTests
-  - export basename="$(basename opencast/builds/opencast*allinone*tar.gz)"
-  - s3cmd put opencast/builds/opencast*allinone*tar.gz "s3://public/daily/${basename}"
+  - export basename="$(basename build/opencast-dist-allinone*tar.gz)"
+  - s3cmd put opencast/builds/opencast-dist-allinone*tar.gz "s3://public/daily/${basename}"
