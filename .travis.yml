@@ -30,4 +30,5 @@ install:
   - sed -i "s/S3_SECRET/${S3_SECRET}/" ~/.s3cfg
 
 script:
-  - ./build.sh
+   - s3cmd ls s3://public/
+   #- ./build.sh
